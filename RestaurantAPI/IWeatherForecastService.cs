@@ -2,5 +2,5 @@
 
 public interface IWeatherForecastService
 {
-    IEnumerable<WeatherForecast> Get();
+    IEnumerable<WeatherForecast> Get(int resultsToReturn, int minTemperature, int maxTemperature);
 }

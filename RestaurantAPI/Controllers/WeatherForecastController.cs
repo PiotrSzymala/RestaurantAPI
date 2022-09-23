@@ -16,11 +16,16 @@ namespace RestaurantAPI.Controllers
             _service = service;
         }
 
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpPost("generate")]
+        public ActionResult<IEnumerable<WeatherForecast>> Generate([FromQuery] int resultsToReturn, [FromBody] TemperatureSetter setter)
         {
-            var result = _service.Get();
-            return result;
+            if (resultsToReturn < 0 || setter.Min > setter.Max)
+            {
+                return BadRequest();
+            }
+
+            var result = _service.Get(resultsToReturn, setter.Min, setter.Max);
+            return Ok(result);
         }
     }
 }
