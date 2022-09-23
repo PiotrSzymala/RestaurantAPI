@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using RestaurantAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddSingleton<IWeatherForecastService, WeatherForecastService>();
+
+builder.Services.AddDbContext<RestaurantApiContext>(
+    option=> option.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantApiConnectionString"))
+    );
 
 var app = builder.Build();
 
