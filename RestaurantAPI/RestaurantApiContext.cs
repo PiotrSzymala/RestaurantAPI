@@ -45,6 +45,17 @@ namespace RestaurantAPI
                     .HasColumnType("decimal")
                     .HasPrecision(18,2);
             });
+
+            modelBuilder.Entity<Address>(eb =>
+            {
+                eb.Property(a => a.City)
+                    .IsRequired()
+                    .HasMaxLength(75);
+
+                eb.Property(a=>a.Street)
+                    .IsRequired()
+                    .HasMaxLength(75);
+            });
         }
     }
 }
