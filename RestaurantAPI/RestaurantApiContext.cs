@@ -21,41 +21,7 @@ namespace RestaurantAPI
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Restaurant>(eb =>
-            {
-                eb.HasOne(r => r.Address)
-                    .WithOne(a => a.Restaurant)
-                    .HasForeignKey<Address>(a=>a.RestaurantId);
-
-                eb.HasMany(r => r.Dishes)
-                    .WithOne(d => d.Restaurant)
-                    .HasForeignKey(d => d.RestaurantId);
-
-                eb.Property(r => r.Name)
-                    .IsRequired()
-                    .HasMaxLength(25);
-            });
-
-            modelBuilder.Entity<Dish>(eb =>
-            {
-                eb.Property(d => d.Name)
-                    .IsRequired();
-
-                eb.Property(d => d.Price)
-                    .HasColumnType("decimal")
-                    .HasPrecision(18,2);
-            });
-
-            modelBuilder.Entity<Address>(eb =>
-            {
-                eb.Property(a => a.City)
-                    .IsRequired()
-                    .HasMaxLength(75);
-
-                eb.Property(a=>a.Street)
-                    .IsRequired()
-                    .HasMaxLength(75);
-            });
+            modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
     }
 }
