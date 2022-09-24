@@ -16,7 +16,7 @@ namespace RestaurantAPI.Controllers
     public class RestaurantController : ControllerBase
     {
         private readonly IRestaurantService _restaurantService;
-       
+
         public RestaurantController(IRestaurantService restaurantService)
         {
             _restaurantService = restaurantService;
@@ -34,18 +34,34 @@ namespace RestaurantAPI.Controllers
 
             return Created($"/api/restaurants/{id}", null);
         }
-       
-        //[HttpPost("update")]
-        //public ActionResult UpdateRestaurantPhone()
-        //{
-        //    var restaurant = _dbContext.Restaurants.FirstOrDefault(r => r.Id == 16);
 
-            
-        //         restaurant.ContactNumber = "987-342-667";
-        //         _dbContext.SaveChanges();
-            
-        //    return Ok();
-        //}
+        [HttpDelete("{id}")]
+        public ActionResult Delete([FromRoute] int id)
+        {
+            var isDeleted = _restaurantService.Delete(id);
+
+            if (isDeleted)
+                return NoContent();
+
+
+            return NotFound();
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult Update([FromBody] UpdateRestaurantDto dto, [FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var isUpdated = _restaurantService.Update(id, dto);
+           
+            if (isUpdated)
+            {
+                return Ok();
+            }
+
+            return NotFound();
+        }
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDtos = _restaurantService.GetAll();
@@ -60,7 +76,7 @@ namespace RestaurantAPI.Controllers
 
             if (restaurant is null)
                 return NotFound();
-            
+
             return Ok(restaurant);
         }
     }
