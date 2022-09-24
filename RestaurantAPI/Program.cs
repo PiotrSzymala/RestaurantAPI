@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using NLog.Web;
 using RestaurantAPI;
 using RestaurantAPI.Services;
 
@@ -8,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
@@ -34,3 +39,5 @@ app.UseHttpsRedirection();
 app.MapControllers();
 
 app.Run();
+
+NLog.LogManager.Shutdown();
