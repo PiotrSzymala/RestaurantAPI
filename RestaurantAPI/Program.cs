@@ -2,6 +2,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using RestaurantAPI;
+using RestaurantAPI.Middleware;
 using RestaurantAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,7 @@ builder.Services.AddControllers();
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
@@ -24,6 +26,7 @@ var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<RestaurantApiContext>();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 var pendingMigrations = dbContext.Database.GetPendingMigrations();
 if (pendingMigrations.Any())
@@ -33,7 +36,6 @@ if (pendingMigrations.Any())
 
 //DataGenerator.Seed(dbContext);
 // Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
 
 app.MapControllers();

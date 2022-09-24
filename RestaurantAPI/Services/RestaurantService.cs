@@ -27,7 +27,7 @@ namespace RestaurantAPI.Services
 
         public RestaurantService(RestaurantApiContext dbContext, IMapper mapper, ILogger<RestaurantService> logger)
         {
-            _dbContext = dbContext;
+            _dbContext =  dbContext;
             _mapper = mapper;
             _logger = logger;
         }
