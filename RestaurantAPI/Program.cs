@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using RestaurantAPI;
+using RestaurantAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,9 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
 builder.Services.AddDbContext<RestaurantApiContext>(
-    option=> option.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantApiConnectionString"))
+    option => option.UseSqlServer(builder.Configuration.GetConnectionString("RestaurantApiConnectionString"))
     );
 
 var app = builder.Build();
