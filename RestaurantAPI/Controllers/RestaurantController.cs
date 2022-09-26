@@ -46,6 +46,8 @@ namespace RestaurantAPI.Controllers
             
             return Ok();
         }
+
+        [HttpGet]
         public ActionResult<IEnumerable<RestaurantDto>> GetAll()
         {
             var restaurantsDtos = _restaurantService.GetAll();

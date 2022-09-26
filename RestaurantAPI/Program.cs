@@ -1,15 +1,25 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using NLog.Web;
 using RestaurantAPI;
 using RestaurantAPI.Middleware;
 using RestaurantAPI.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+
+builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Logging.ClearProviders();
 builder.Host.UseNLog();
@@ -23,6 +33,15 @@ builder.Services.AddDbContext<RestaurantApiContext>(
     );
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Restaurant API");
+    });
+}
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<RestaurantApiContext>();
