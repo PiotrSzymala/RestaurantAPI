@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RestaurantAPI.Exceptions;
 
 namespace RestaurantAPI.Middleware
 {
@@ -19,6 +20,11 @@ namespace RestaurantAPI.Middleware
             try
             {
                 await next.Invoke(context);
+            }
+            catch (NotFoundException notFoundException)
+            {
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsync(notFoundException.Message);
             }
             catch (Exception e)
             {
