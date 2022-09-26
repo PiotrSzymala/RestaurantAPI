@@ -25,6 +25,7 @@ builder.Logging.ClearProviders();
 builder.Host.UseNLog();
 
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+builder.Services.AddScoped<RequestTimeMiddleware>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
@@ -46,6 +47,7 @@ if (app.Environment.IsDevelopment())
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<RestaurantApiContext>();
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestTimeMiddleware>();
 
 var pendingMigrations = dbContext.Database.GetPendingMigrations();
 if (pendingMigrations.Any())
