@@ -59,6 +59,7 @@ if (pendingMigrations.Any())
 }
 
 //DataGenerator.Seed(dbContext);
+//DataGenerator.SeedRoles(dbContext);
 // Configure the HTTP request pipeline.
 app.UseHttpsRedirection();
 

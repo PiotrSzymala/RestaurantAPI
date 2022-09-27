@@ -17,15 +17,15 @@ namespace RestaurantAPI
             Randomizer.Seed = new Random(997);
 
             var addressGenerator = new Faker<Address>()
-                .RuleFor(a=>a.City, f=>f.Address.City())
-                .RuleFor(a=>a.Street, f=>f.Address.StreetName())
-                .RuleFor(a=>a.PostalCode, f=>f.Address.ZipCode("##-###"));
+                .RuleFor(a => a.City, f => f.Address.City())
+                .RuleFor(a => a.Street, f => f.Address.StreetName())
+                .RuleFor(a => a.PostalCode, f => f.Address.ZipCode("##-###"));
 
 
             var dishesGenerator = new Faker<Dish>()
                 .RuleFor(d => d.Name, f => f.Commerce.ProductName())
                 .RuleFor(d => d.Description, f => f.Commerce.ProductDescription())
-                .RuleFor(d => d.Price, f => Convert.ToDecimal( f.Commerce.Price(10m, 145m, 3)));
+                .RuleFor(d => d.Price, f => Convert.ToDecimal(f.Commerce.Price(10m, 145m, 3)));
 
 
             var restaurant = new Faker<Restaurant>()
@@ -35,14 +35,27 @@ namespace RestaurantAPI
                 .RuleFor(r => r.HasDelivery, f => f.Random.Bool())
                 .RuleFor(r => r.ContactEmail, f => f.Internet.Email())
                 .RuleFor(r => r.ContactNumber, f => f.Phone.PhoneNumber("###-###-###"))
-                .RuleFor(r => r.Address, f=>addressGenerator.Generate())
+                .RuleFor(r => r.Address, f => addressGenerator.Generate())
                 .RuleFor(r => r.Dishes, f => dishesGenerator.Generate(10));
-                
 
-            var restaurants = restaurant.Generate(15);
-            
-            //context.AddRange(restaurants);
-            //context.SaveChanges();
+            if (!context.Restaurants.Any())
+            {
+                var restaurants = restaurant.Generate(15);
+
+                context.AddRange(restaurants);
+                context.SaveChanges();
+            }
+        }
+
+        public static void SeedRoles(RestaurantApiContext context)
+        {
+            if (!context.Roles.Any())
+            {
+                context.Roles
+                    .AddRange(new Role() { Name = "User" }, new Role() { Name = "Manager" }, new Role() { Name = "Admin" });
+
+                context.SaveChanges();
+            }
         }
     }
 }
