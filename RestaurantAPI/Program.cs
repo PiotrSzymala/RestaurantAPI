@@ -1,10 +1,12 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Json.Serialization;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using NLog.Web;
 using RestaurantAPI;
 using RestaurantAPI.Entities;
@@ -16,12 +18,35 @@ using RestaurantAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var authenticationSettings = new AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
+
 // Add services to the container.
+
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidIssuer = authenticationSettings.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+    };
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddFluentValidationAutoValidation();
+
 builder.Services.AddSwaggerGen();
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
@@ -71,6 +96,7 @@ if (pendingMigrations.Any())
 //DataGenerator.Seed(dbContext);
 //DataGenerator.SeedRoles(dbContext);
 // Configure the HTTP request pipeline.
+app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.MapControllers();
