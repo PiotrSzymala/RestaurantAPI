@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace RestaurantAPI.Services
 {
@@ -15,10 +16,12 @@ namespace RestaurantAPI.Services
     public class AccountService : IAccountService
     {
         private readonly RestaurantApiContext _context;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public AccountService(RestaurantApiContext context)
+        public AccountService(RestaurantApiContext context, IPasswordHasher<User> passwordHasher)
         {
             _context = context;
+            _passwordHasher = passwordHasher;
         }
         public void RegisterUser(RegisterUserDto dto)
         {
@@ -29,6 +32,10 @@ namespace RestaurantAPI.Services
                 Nationality = dto.Nationality,
                 RoleId = dto.RoleId
             };
+
+            var hashPassword = _passwordHasher.HashPassword(newUser, dto.Password);
+
+            newUser.PasswordHash = hashPassword;
 
             _context.Users.Add(newUser);
             _context.SaveChanges();
