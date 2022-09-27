@@ -22,7 +22,7 @@ var authenticationSettings = new AuthenticationSettings();
 builder.Configuration.GetSection("Authentication").Bind(authenticationSettings);
 
 // Add services to the container.
-
+builder.Services.AddSingleton(authenticationSettings);
 builder.Services.AddAuthentication(option =>
 {
     option.DefaultAuthenticateScheme = "Bearer";
