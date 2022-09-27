@@ -51,7 +51,7 @@ namespace RestaurantAPI.Migrations
                 name: "IX_Users_RoleId",
                 table: "Users",
                 column: "RoleId",
-                unique: true);
+                unique: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
