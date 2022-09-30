@@ -15,13 +15,13 @@ namespace RestaurantAPI.Services
 
     public class UserContextService : IUserContextService
     {
-        private readonly HttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public ClaimsPrincipal User => _httpContextAccessor.HttpContext?.User;
 
         public int? GetUserId =>
             User is null ? null : (int?)int.Parse(User.FindFirst(c => c.Type == ClaimTypes.NameIdentifier).Value);
 
-        public UserContextService(HttpContextAccessor httpContextAccessor)
+        public UserContextService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
