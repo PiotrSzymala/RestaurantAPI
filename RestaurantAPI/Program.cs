@@ -88,6 +88,7 @@ builder.Services.AddDbContext<RestaurantApiContext>(
     );
 
 var app = builder.Build();
+app.UseResponseCaching();
 app.UseStaticFiles();
 
 if (app.Environment.IsDevelopment())
