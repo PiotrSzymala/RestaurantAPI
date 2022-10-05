@@ -102,17 +102,18 @@ if (app.Environment.IsDevelopment())
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<RestaurantApiContext>();
-app.UseMiddleware<ErrorHandlingMiddleware>();
-app.UseMiddleware<RequestTimeMiddleware>();
 
 var pendingMigrations = dbContext.Database.GetPendingMigrations();
 if (pendingMigrations.Any())
 {
     dbContext.Database.Migrate();
 }
+app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseMiddleware<RequestTimeMiddleware>();
 
-//DataGenerator.Seed(dbContext);
-//DataGenerator.SeedRoles(dbContext);
+
+DataGenerator.Seed(dbContext);
+DataGenerator.SeedRoles(dbContext);
 // Configure the HTTP request pipeline.
 app.UseAuthentication();
 app.UseHttpsRedirection();
